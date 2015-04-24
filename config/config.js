@@ -9,7 +9,6 @@ var config = {
       name: 'flipendo-api'
     },
     port: 3000,
-    db: 'mongodb://localhost/flipendo-api-development'
   },
 
   test: {
@@ -18,7 +17,6 @@ var config = {
       name: 'flipendo-api'
     },
     port: 3000,
-    db: 'mongodb://localhost/flipendo-api-test'
   },
 
   production: {
@@ -27,7 +25,6 @@ var config = {
       name: 'flipendo-api'
     },
     port: 3000,
-    db: 'mongodb://localhost/flipendo-api-production'
   }
 };
 
