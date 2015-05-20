@@ -8,6 +8,14 @@ var config = {
     app: {
       name: 'flipendo-api'
     },
+    upload: {
+      uploader: 's3',
+      bucket: 'flipendo',
+      baseDir: 'files',
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      awsAccountId: process.env.AWS_ACCOUNT_ID,
+    },
     port: 3000,
   },
 
@@ -16,6 +24,15 @@ var config = {
     app: {
       name: 'flipendo-api'
     },
+    upload: {
+      uploader: 's3',
+      bucket: 'flipendo',
+      baseDir: 'files',
+      accessKeyId: process.env.ACCESS_KEY_ID,
+      secretAccessKey: process.env.SECRET_ACCESS_KEY,
+      awsAccountId: process.env.AWS_ACCOUNT_ID,
+
+    },
     port: 3000,
   },
 
@@ -23,6 +40,14 @@ var config = {
     root: rootPath,
     app: {
       name: 'flipendo-api'
+    },
+    upload: {
+      uploader: 's3',
+      bucket: 'flipendo',
+      baseDir: 'files',
+      accessKeyId: process.env.ACCESS_KEY_ID,
+      secretAccessKey: process.env.SECRET_ACCESS_KEY,
+      awsAccountId: process.env.AWS_ACCOUNT_ID,
     },
     port: 3000,
   }
