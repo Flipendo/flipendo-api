@@ -28,8 +28,9 @@ exports.progress = function(req, res) {
 
     var roomKeys = Object.keys(io.sockets.manager.roomClients[socket.id]);
     roomKeys.forEach(function(key) {
-        if (key === '' || key === '/' + room) return;
-        socket.leave(key.slice(1));
+      if (key === '' || key === '/' + room)
+        return;
+      socket.leave(key.slice(1));
     });
 
     socket.join(room);
