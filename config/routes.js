@@ -4,5 +4,4 @@ module.exports = function(app){
 	var home = require('../app/controllers/home');
 	app.get('/', home.index);
 	app.post('/upload', home.upload);
-	app.get('/:id', home.progress);
 };
