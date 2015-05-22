@@ -70,6 +70,7 @@ module.exports = new function() {
       amqp.publish(config.amqp.worker_queue, {
         action: 'merge',
         id: id,
+        chunks: this.files[id].chunks.length,
         source: config.upload.uploader
       });
     }
