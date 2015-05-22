@@ -9,14 +9,14 @@ module.exports = function(app, config) {
     console.log("Connected to rabbitmq");
     connection.queue(config.amqp.api_queue, function (q) {
       q.subscribe(function(message) {
-        console.log("Message received", message)
+        console.log("Message received", message);
         if (message.action == "split") {
           files.updateChunks(app.get('io'), message.id, message.chunks);
         } else if (message.action == "transcoded") {
-          file.updateChunk(app.get('io'), message.id, message.chunk, message.done, message.error);
-          file.checkIntegrity(app.get('io'), connection, message.id);
+          files.updateChunk(app.get('io'), message.id, message.chunk, message.done, message.error);
+          files.checkIntegrity(app.get('io'), connection, message.id);
         } else if (message.action == "merged") {
-          file.done(app.get('io'), connection);
+          files.done(app.get('io'), connection);
         }
       });
       console.log('Subscribed to', config.amqp.api_queue);
