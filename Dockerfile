@@ -12,4 +12,6 @@ WORKDIR /flipendo-api
 
 EXPOSE 3000
 
+ENV NODE_ENV=docker
+
 CMD ["npm", "start"]
