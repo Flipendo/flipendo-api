@@ -9,7 +9,7 @@ module.exports = function(app, config) {
     console.log("Connected to rabbitmq");
     connection.queue(config.amqp.api_queue, function (q) {
       q.subscribe(function(message) {
-        console.log("received a message");
+        console.log("received a message", message);
       });
       console.log('Subscribed to', config.amqp.api_queue);
     });
