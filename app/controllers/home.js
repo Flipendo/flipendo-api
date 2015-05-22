@@ -15,14 +15,15 @@ exports.upload = function(req, res){
   console.log("Using", config.upload.uploader, "to upload file");
   uploaders[config.upload.uploader](config.upload, id, req.files.file.name, rstream, function(err, data) {
     if (err) {
-      console.log("Error when uploading")
-      res.send({status: err.statusCode, error: "Could not upload file to server", code: err.code}, err.statusCode);
+      console.log("Error when uploading", err);
+      res.status(err.statusCode).send({status: err.statusCode, error: "Could not upload file to server", code: err.code});
       return
     }
     files.addFile(req.io, id);
     req.amqp.publish(config.amqp.worker_queue, {
       action: 'split',
-      filename: id+path.extname(req.files.file.name),
+      id: id,
+      extension: path.extname(req.files.file.name),
       source: config.upload.uploader
     }, {}, function(err) {
       console.log("message sent");
