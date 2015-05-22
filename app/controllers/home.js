@@ -22,7 +22,10 @@ exports.upload = function(req, res){
       action: 'split',
       filename: id+path.extname(req.files.file.name),
       source: config.upload.uploader
+    }, {}, function(err) {
+      console.log("message sent");
     });
+    console.log("Tried to publish message");
     res.send({status: 200, id: id});
   });
 };
