@@ -12,8 +12,10 @@ exports.index = function(req, res){
 exports.upload = function(req, res){
   var id = uuid.v1();
   var rstream = fs.createReadStream(req.files.file.path);
+  console.log("Using", config.upload.uploader, "to upload file");
   uploaders[config.upload.uploader](config.upload, id, req.files.file.name, rstream, function(err, data) {
     if (err) {
+      console.log("Error when uploading")
       res.send({status: err.statusCode, error: "Could not upload file to server", code: err.code}, err.statusCode);
       return
     }
