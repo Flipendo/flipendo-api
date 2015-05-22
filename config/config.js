@@ -18,31 +18,10 @@ var config = {
     amqp: {
       host: process.env.RABBITMQ_PORT_5672_TCP_ADDR,
       port: process.env.RABBITMQ_PORT_5672_TCP_PORT,
-      exchange_name: 'flipendo'
+      queue_name: 'flipendo'
     },
     port: 3000,
   },
-
-  test: {
-    root: rootPath,
-    app: {
-      name: 'flipendo-api'
-    },
-    upload: {
-      uploader: 's3',
-      bucket: 'flipendo',
-      baseDir: 'files',
-      accessKeyId: process.env.ACCESS_KEY_ID,
-      secretAccessKey: process.env.SECRET_ACCESS_KEY,
-    },
-    amqp: {
-      host: process.env.RABBITMQ_PORT_5672_TCP_ADDR,
-      port: process.env.RABBITMQ_PORT_5672_TCP_PORT,
-      exchange_name: 'flipendo'
-    },
-    port: 3000,
-  },
-
   production: {
     root: rootPath,
     app: {
@@ -58,7 +37,8 @@ var config = {
     amqp: {
       host: process.env.RABBITMQ_PORT_5672_TCP_ADDR,
       port: process.env.RABBITMQ_PORT_5672_TCP_PORT,
-      exchange_name: 'flipendo'
+      worker_queue: 'flipendo-worker',
+      api_queue: 'flipendo-api',
     },
     port: 3000,
   }
