@@ -66,13 +66,13 @@ module.exports = new function() {
     }
     if (!err) {
       this.files[id].status = 'merging';
-      this.files[id].nsp.emit('merging', {});
       amqp.publish(config.amqp.worker_queue, {
         action: 'merge',
         id: id,
         chunks: this.files[id].chunks.length,
         source: config.upload.uploader
       });
+      this.files[id].nsp.emit('merging', {});
     }
   };
 
