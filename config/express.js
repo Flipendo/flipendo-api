@@ -18,6 +18,10 @@ module.exports = function(app, config) {
     app.use(allowCrossDomain);
     app.use(function(req, res, next) {
       req.io = app.get('io');
+      req.amqp = {
+        connection: app.get('amqp_connection'),
+        exchange: app.get('amqp_exchange')
+      }
       next();
     });
     app.use(app.router);

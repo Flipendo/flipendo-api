@@ -6,6 +6,7 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "amqp": "^0.2.4",
     "aws-sdk": "^2.1.29",
     "connect-busboy": "0.0.2",
     "express": "~3.3.4",

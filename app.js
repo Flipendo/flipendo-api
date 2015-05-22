@@ -5,7 +5,8 @@ var app = require('express')(),
 
 app.set('io', io);
 
-server.listen(3000);
+server.listen(config.port);
 
 require('./config/express')(app, config);
 require('./config/routes')(app);
+require('./config/amqp')(app, config);

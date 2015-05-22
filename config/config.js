@@ -14,7 +14,11 @@ var config = {
       baseDir: 'files',
       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      awsAccountId: process.env.AWS_ACCOUNT_ID,
+    },
+    amqp: {
+      host: process.env.RABBITMQ_PORT_5672_TCP_ADDR,
+      port: process.env.RABBITMQ_PORT_5672_TCP_PORT,
+      exchange_name: 'flipendo'
     },
     port: 3000,
   },
@@ -30,8 +34,11 @@ var config = {
       baseDir: 'files',
       accessKeyId: process.env.ACCESS_KEY_ID,
       secretAccessKey: process.env.SECRET_ACCESS_KEY,
-      awsAccountId: process.env.AWS_ACCOUNT_ID,
-
+    },
+    amqp: {
+      host: process.env.RABBITMQ_PORT_5672_TCP_ADDR,
+      port: process.env.RABBITMQ_PORT_5672_TCP_PORT,
+      exchange_name: 'flipendo'
     },
     port: 3000,
   },
@@ -47,7 +54,11 @@ var config = {
       baseDir: 'files',
       accessKeyId: process.env.ACCESS_KEY_ID,
       secretAccessKey: process.env.SECRET_ACCESS_KEY,
-      awsAccountId: process.env.AWS_ACCOUNT_ID,
+    },
+    amqp: {
+      host: process.env.RABBITMQ_PORT_5672_TCP_ADDR,
+      port: process.env.RABBITMQ_PORT_5672_TCP_PORT,
+      exchange_name: 'flipendo'
     },
     port: 3000,
   }
