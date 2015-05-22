@@ -15,7 +15,8 @@ module.exports = new function() {
     this.files[id] = {
       id: id,
       chunks: chunks,
-      nsp: nsp
+      nsp: nsp,
+      status: 'pending'
     };
   };
 
@@ -55,13 +56,16 @@ module.exports = new function() {
     var err = false;
     for (var i in chunks) {
       if (chunks[i].done == false && chunks[i].error == null) {
+        this.files[id].status = 'pending';
         return;
       }
       if (chunks[i].error) {
+        this.files[id].status = 'error';
         err = true;
       }
     }
     if (!err) {
+      this.files[id].status = 'merging';
       this.files[id].nsp.emit('merging', {});
       amqp.publish(config.amqp.worker_queue, {
         action: 'merge',
@@ -72,6 +76,7 @@ module.exports = new function() {
   };
 
   this.done = function(io, id) {
+    this.files[id].status = 'done';
     this.files[id].nsp.emit('done', {});
   };
 };
