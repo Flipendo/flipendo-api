@@ -17,4 +17,19 @@ module.exports = new function() {
       nsp: nsp
     };
   };
+
+  this.updateChunks = function(io, id, nbr_chunks) {
+    if (!this.files[id]) {
+      return;
+    }
+    this.files[id].chunks = [];
+    for (var i = 0; i < nbr_chunks; i++) {
+      this.files[id].chunks.push({
+        n: i,
+        done: false,
+        error: null,
+      });
+    }
+    this.files[id].nsp.emit('chunks', this.files[id].chunks);
+  };
 };

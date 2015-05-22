@@ -9,7 +9,9 @@ module.exports = function(app, config) {
     console.log("Connected to rabbitmq");
     connection.queue(config.amqp.api_queue, function (q) {
       q.subscribe(function(message) {
-        console.log("received a message", message);
+        if (message.action == "split") {
+          files.updateChunks(app.get('io'), message.id, message.chunks);
+        }
       });
       console.log('Subscribed to', config.amqp.api_queue);
     });
