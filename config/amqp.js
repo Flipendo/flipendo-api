@@ -11,8 +11,12 @@ module.exports = function(app, config) {
       q.subscribe(function(message) {
         console.log("Message received", message)
         if (message.action == "split") {
-          console.log("message action split");
           files.updateChunks(app.get('io'), message.id, message.chunks);
+        } else if (message.action == "transcoded") {
+          file.updateChunk(app.get('io'), message.id, message.chunk, message.done, message.error);
+          file.checkIntegrity(app.get('io'), connection, message.id);
+        } else if (message.action == "merged") {
+          file.done(app.get('io'), connection);
         }
       });
       console.log('Subscribed to', config.amqp.api_queue);

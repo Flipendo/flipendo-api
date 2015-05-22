@@ -8,6 +8,7 @@ module.exports = new function() {
     }
     var nsp = io.of('/'+id);
     nsp.on('connection', function (socket) {
+      console.log("connection on socket io", id);
       socket.emit('chunks', self.files[id].chunks);
     });
 
@@ -20,6 +21,7 @@ module.exports = new function() {
 
   this.updateChunks = function(io, id, nbr_chunks) {
     if (!this.files[id]) {
+      console.log("file "+ id +" doesn't exist in files:", this.files);
       return;
     }
     this.files[id].chunks = [];
@@ -30,6 +32,46 @@ module.exports = new function() {
         error: null,
       });
     }
+    console.log("sending chunks", this.files[id].chunks);
     this.files[id].nsp.emit('chunks', this.files[id].chunks);
+  };
+
+  this.updateChunk = function(io, id, chunk, done, error) {
+    if (!this.files[id]) {
+      console.log("file "+ id +" doesn't exist in files:", this.files);
+      return;
+    }
+    this.files[id].chunks[chunk] = {
+      n: chunk,
+      done: done,
+      error: error,
+    };
+    console.log("sending chunk", this.files[id].chunks[chunk]);
+    this.files[id].nsp.emit('chunk', this.files[id].chunks[chunk]);
+  };
+
+  this.checkIntegrity = function(io, amqp, id) {
+    var chunks = this.files[id].chunks;
+    var err = false;
+    for (var i in chunks) {
+      if (chunks[i].done == false && chunks[i].error == null) {
+        return;
+      }
+      if (chunks[i].error) {
+        err = true;
+      }
+    }
+    if (!err) {
+      this.files[id].nsp.emit('merging', {});
+      amqp.publish(config.amqp.worker_queue, {
+        action: 'merge',
+        id: id,
+        source: config.upload.uploader
+      });
+    }
+  };
+
+  this.done = function(io, id) {
+    this.files[id].nsp.emit('done', {});
   };
 };
