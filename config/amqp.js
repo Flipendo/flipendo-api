@@ -14,9 +14,9 @@ module.exports = function(app, config) {
           files.updateChunks(app.get('io'), message.id, message.chunks);
         } else if (message.action == "transcoded") {
           files.updateChunk(app.get('io'), message.id, message.chunk, message.done, message.error);
-          files.checkIntegrity(app.get('io'), connection, message.id);
+          files.checkIntegrity(connection, message.id);
         } else if (message.action == "merged") {
-          files.done(app.get('io'), connection);
+          files.done(connection, message.id);
         }
         message.acknowledge(false);
       });

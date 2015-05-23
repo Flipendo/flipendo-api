@@ -1,3 +1,5 @@
+var config = require('../../config/config');
+
 module.exports = new function() {
   this.files = {};
 
@@ -51,20 +53,28 @@ module.exports = new function() {
     this.files[id].nsp.emit('chunk', this.files[id].chunks[chunk]);
   };
 
-  this.checkIntegrity = function(io, amqp, id) {
+  this.checkIntegrity = function(amqp, id) {
+    if (!this.files[id]) {
+      console.log("file "+ id +" doesn't exist in files:", this.files);
+    }
     var chunks = this.files[id].chunks;
     var err = false;
+    console.log("checking integrity", chunks);
     for (var i in chunks) {
-      if (chunks[i].done == false && chunks[i].error == null) {
+      if (chunks[i].done == false && chunks[i].error == null && err == false) {
+        console.log("not done", chunks[i]);
         this.files[id].status = 'pending';
         return;
       }
       if (chunks[i].error) {
+        console.log("error", chunks[i]);
         this.files[id].status = 'error';
         err = true;
       }
     }
-    if (!err) {
+    if (err == false) {
+      console.log("publishing merge order");
+      console.log("publishing merge order to", config.amqp.worker_queue);
       this.files[id].status = 'merging';
       amqp.publish(config.amqp.worker_queue, {
         action: 'merge',
