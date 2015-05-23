@@ -71,6 +71,8 @@ module.exports = new function() {
         id: id,
         chunks: this.files[id].chunks.length,
         source: config.upload.uploader
+      }, {}, function(confirm) {
+        console.log("Received answer from merge", confirm);
       });
       this.files[id].nsp.emit('merging', {});
     }

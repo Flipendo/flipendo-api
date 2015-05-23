@@ -25,6 +25,8 @@ exports.upload = function(req, res){
       id: id,
       extension: path.extname(req.files.file.name),
       source: config.upload.uploader
+    }, {}, function(confirm) {
+      console.log("Received answer from split", confirm);
     });
     console.log("Tried to publish message");
     res.send({status: 200, id: id});

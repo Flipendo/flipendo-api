@@ -18,6 +18,7 @@ module.exports = function(app, config) {
         } else if (message.action == "merged") {
           files.done(app.get('io'), connection);
         }
+        message.acknowledge(false);
       });
       console.log('Subscribed to', config.amqp.api_queue);
     });
