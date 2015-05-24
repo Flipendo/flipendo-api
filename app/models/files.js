@@ -11,7 +11,10 @@ module.exports = new function() {
     var nsp = io.of('/'+id);
     nsp.on('connection', function (socket) {
       console.log("connection on socket io", id);
-      socket.emit('chunks', self.files[id].chunks);
+      socket.emit('file', {
+        status: self.files[id].status,
+        chunks:self.files[id].chunks
+      });
     });
 
     this.files[id] = {
