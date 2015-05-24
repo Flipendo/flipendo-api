@@ -12,6 +12,7 @@ module.exports = new function() {
     nsp.on('connection', function (socket) {
       console.log("connection on socket io", id);
       socket.emit('file', {
+        error: self.files[id].error,
         status: self.files[id].status,
         chunks:self.files[id].chunks
       });
@@ -21,21 +22,25 @@ module.exports = new function() {
       id: id,
       chunks: chunks,
       nsp: nsp,
-      status: 'pending'
+      status: 'pending',
+      error: false
     };
   };
 
-  this.updateChunks = function(io, id, nbr_chunks) {
+  this.updateChunks = function(io, id, nbr_chunks, error) {
     if (!this.files[id]) {
       console.log("file "+ id +" doesn't exist in files:", this.files);
       return;
     }
+    if (error)
+      this.files[id].status = 'error';
+    this.files[id].error = error;
     this.files[id].chunks = [];
     for (var i = 0; i < nbr_chunks; i++) {
       this.files[id].chunks.push({
         n: i,
         done: false,
-        error: null,
+        error: false,
       });
     }
     console.log("sending chunks", this.files[id].chunks);
@@ -46,6 +51,10 @@ module.exports = new function() {
     if (!this.files[id]) {
       console.log("file "+ id +" doesn't exist in files:", this.files);
       return;
+    }
+    if (error) {
+      this.files[id].status = 'error';
+      this.files[id].error = error;
     }
     this.files[id].chunks[chunk] = {
       n: chunk,
@@ -62,22 +71,18 @@ module.exports = new function() {
     }
     var chunks = this.files[id].chunks;
     var err = false;
-    console.log("checking integrity", chunks);
     for (var i in chunks) {
       if (chunks[i].done == false && chunks[i].error == null && err == false) {
-        console.log("not done", chunks[i]);
         this.files[id].status = 'pending';
         return;
       }
       if (chunks[i].error) {
-        console.log("error", chunks[i]);
         this.files[id].status = 'error';
+        this.files[id].error = chunks[i].error;
         err = true;
       }
     }
     if (err == false) {
-      console.log("publishing merge order");
-      console.log("publishing merge order to", config.amqp.worker_queue);
       this.files[id].status = 'merging';
       amqp.publish(config.amqp.worker_queue, {
         action: 'merge',
@@ -91,8 +96,11 @@ module.exports = new function() {
     }
   };
 
-  this.done = function(io, id) {
+  this.done = function(io, id, error) {
+    this.files[id].error = error;
     this.files[id].status = 'done';
-    this.files[id].nsp.emit('done', {});
+    if (error)
+      this.files[id].status = 'error';
+    this.files[id].nsp.emit('done', { error: err});
   };
 };
