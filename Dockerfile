@@ -2,7 +2,7 @@ FROM node:0.12
 
 ADD package.json /install/package.json
 RUN cd /install && npm install
-RUN mkdir -p /flipendo-api && cp -a /install/node_modules /flipendo-api/
+RUN mkdir -p /flipendo-api && cp -a /install/node_modules /flipendo-api/ && rm -rf /install
 
 VOLUME ["~/.aws"]
 
