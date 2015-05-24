@@ -20,12 +20,12 @@ exports.upload = function(req, res){
       return
     }
     files.addFile(req.io, id);
-    req.amqp.publish(config.amqp.worker_queue, {
+    req.amqp.sendToQueue(config.amqp.worker_queue, new Buffer(JSON.stringify({
       action: 'split',
       id: id,
       extension: path.extname(req.files.file.name),
       source: config.upload.uploader
-    }, {}, function(confirm) {
+    })), {}, function(confirm) {
       console.log("Received answer from split", confirm);
     });
     console.log("Tried to publish message");

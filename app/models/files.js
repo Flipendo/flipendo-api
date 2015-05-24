@@ -84,12 +84,12 @@ module.exports = new function() {
     }
     if (err == false) {
       this.files[id].status = 'merging';
-      amqp.publish(config.amqp.worker_queue, {
+      amqp.sendToQueue(config.amqp.worker_queue, new Buffer(JSON.stringify({
         action: 'merge',
         id: id,
         chunks: this.files[id].chunks.length,
         source: config.upload.uploader
-      }, {}, function(confirm) {
+      })), {}, function(confirm) {
         console.log("Received answer from merge", confirm);
       });
       this.files[id].nsp.emit('merging', {});

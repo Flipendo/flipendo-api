@@ -1,25 +1,35 @@
-var amqp = require('amqp'),
+var amqp = require('amqplib'),
     files = require('../app/models/files');
 
 module.exports = function(app, config) {
   console.log("Connecting to rabbitmq");
-  var connection = amqp.createConnection({ host: config.amqp.host });
-  app.set('amqp_connection', connection);
-  connection.on('ready', function () {
-    connection.queue(config.amqp.api_queue, function (q) {
-      q.subscribe(function(message) {
-        console.log("Message received", message);
-        if (message.action == "split") {
-          files.updateChunks(app.get('io'), message.id, message.chunks, message.error);
-        } else if (message.action == "transcoded") {
-          files.updateChunk(app.get('io'), message.id, message.chunk, message.done, message.error);
-          files.checkIntegrity(connection, message.id);
-        } else if (message.action == "merged") {
-          files.done(connection, message.id, message.error);
-        }
-        message.acknowledge(false);
+
+  amqp.connect('amqp://'+config.amqp.host).then(function(conn) {
+    process.once('SIGINT', function() { conn.close(); });
+    return conn.createChannel().then(function(ch) {
+      console.log("AMQP channel created");
+      app.set('amqp_connection', ch);
+
+      // assert queues
+      var ok = ch.assertQueue(config.amqp.api_queue, {durable: true});
+      ok = ok.then(function() { ch.assertQueue(config.amqp.worker_queue, {durable: true}); });
+
+      ok = ok.then(function() { ch.prefetch(1); });
+      ok = ok.then(function() {
+        ch.consume(config.amqp.api_queue, function(message) {
+          console.log("Message received", message);
+          if (message.action == "split") {
+            files.updateChunks(app.get('io'), message.id, message.chunks, message.error);
+          } else if (message.action == "transcoded") {
+            files.updateChunk(app.get('io'), message.id, message.chunk, message.done, message.error);
+            files.checkIntegrity(ch, message.id);
+          } else if (message.action == "merged") {
+            files.done(ch, message.id, message.error);
+          }
+          ch.ack(message);
+        }, {noAck: false});
       });
+      return ok;
     });
-  });
-  return connection;
+  }).then(null, console.warn);
 };
