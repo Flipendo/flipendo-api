@@ -16,8 +16,9 @@ module.exports = function(app, config) {
 
       ok = ok.then(function() { ch.prefetch(1); });
       ok = ok.then(function() {
-        ch.consume(config.amqp.api_queue, function(message) {
-          console.log("Message received", message);
+        ch.consume(config.amqp.api_queue, function(msg) {
+          console.log("Message received", msg.content);
+          var message = msg.content;
           if (message.action == "split") {
             files.updateChunks(app.get('io'), message.id, message.chunks, message.error);
           } else if (message.action == "transcoded") {
