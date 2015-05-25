@@ -17,8 +17,9 @@ module.exports = function(app, config) {
       ok = ok.then(function() { ch.prefetch(1); });
       ok = ok.then(function() {
         ch.consume(config.amqp.api_queue, function(msg) {
-          console.log("Message received", msg.content);
-          var message = msg.content;
+          var message = JSON.parse(msg.content.toString());
+          console.log("Message received", message);
+
           if (message.action == "split") {
             files.updateChunks(app.get('io'), message.id, message.chunks, message.error);
           } else if (message.action == "transcoded") {
@@ -27,7 +28,7 @@ module.exports = function(app, config) {
           } else if (message.action == "merged") {
             files.done(ch, message.id, message.error);
           }
-          ch.ack(message);
+          ch.ack(msg);
         }, {noAck: false});
       });
       return ok;
