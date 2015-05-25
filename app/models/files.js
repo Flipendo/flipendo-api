@@ -40,7 +40,7 @@ module.exports = new function() {
       this.files[id].chunks.push({
         n: i,
         done: false,
-        error: false,
+        error: null,
       });
     }
     console.log("sending chunks", this.files[id].chunks);
@@ -72,6 +72,7 @@ module.exports = new function() {
     var chunks = this.files[id].chunks;
     var err = false;
     for (var i in chunks) {
+      console.log("chunk:", chunks[i]);
       if (chunks[i].done == false && chunks[i].error == null && err == false) {
         this.files[id].status = 'pending';
         return;
@@ -101,6 +102,6 @@ module.exports = new function() {
     this.files[id].status = 'done';
     if (error)
       this.files[id].status = 'error';
-    this.files[id].nsp.emit('done', { error: err});
+    this.files[id].nsp.emit('done', { error: error});
   };
 };

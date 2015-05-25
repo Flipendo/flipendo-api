@@ -18,7 +18,7 @@ module.exports = function(app, config) {
       ok = ok.then(function() {
         ch.consume(config.amqp.api_queue, function(msg) {
           var message = JSON.parse(msg.content.toString());
-          console.log("Message received", message);
+          console.log("Message received", message.action);
 
           if (message.action == "split") {
             files.updateChunks(app.get('io'), message.id, message.chunks, message.error);

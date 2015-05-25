@@ -7,6 +7,8 @@ app.set('io', io);
 
 server.listen(config.port);
 
+console.log("Listening on", config.port)
+
 require('./config/express')(app, config);
 require('./config/routes')(app);
 require('./config/amqp')(app, config);
