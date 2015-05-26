@@ -19,7 +19,7 @@ exports.upload = function(req, res){
       res.status(err.statusCode).send({status: err.statusCode, error: "Could not upload file to server", code: err.code});
       return
     }
-    files.addFile(req.io, id);
+    files.addFile(req.io, req.files.file.name, id);
     req.amqp.sendToQueue(config.amqp.worker_queue, new Buffer(JSON.stringify({
       action: 'split',
       id: id,
@@ -31,4 +31,8 @@ exports.upload = function(req, res){
     console.log("Tried to publish message");
     res.send({status: 200, id: id});
   });
+};
+
+exports.files = function(req, res) {
+  res.send({status: 200, files: files.getFiles()});
 };
